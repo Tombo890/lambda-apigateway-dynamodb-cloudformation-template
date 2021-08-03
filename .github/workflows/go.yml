@@ -19,7 +19,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-west-1
     # sam build 
-    - run: sam build --use-container
+    - run: sam build
    
 # sam deploy
     - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name go-hello-world --s3-bucket serverlessplayground --capabilities CAPABILITY_IAM --region us-west-1 
