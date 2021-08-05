@@ -6,6 +6,6 @@ codeuri = "/Users/tomkline/Repos/Paxi/Playground/GO_fun/users"
 runtime = "go1.x"
 source_md5 = ""
 packagetype = "Zip"
-functions = ["HelloWorldFunction"]
+functions = ["UsersFunction"]
 
 [layer_build_definitions]

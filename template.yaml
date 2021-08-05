@@ -17,6 +17,7 @@ Resources:
       CodeUri: users/
       Handler: users
       Runtime: go1.x
+      Role: !Ref Lambda_FullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         CatchAll:
