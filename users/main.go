@@ -34,9 +34,12 @@ type User struct {
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	userId := request.QueryStringParameters["userId"]
-	fmt.Println(userId)
-	user := getuser()
+	userId := request.PathParameters["userId"]
+	deviceId := request.PathParameters["deviceId"]
+	fmt.Println("User: " + userId)
+	fmt.Println("Device: " + deviceId)
+
+	user := getuser(userId, deviceId)
 	formatedUser, err := json.Marshal(user)
 
 	if err != nil {
@@ -49,9 +52,8 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}, nil
 }
 
-func getuser() User {
+func getuser(userId string, deviceId string) User {
 
-	fmt.Println("Start")
 	// Initialize a session that the SDK will use to load
 	// credentials from the shared credentials file ~/.aws/credentials
 	// and region from the shared configuration file ~/.aws/config.
@@ -63,8 +65,6 @@ func getuser() User {
 	svc := dynamodb.New(sess)
 
 	tableName := "Users"
-	userId := "1"
-	deviceId := "1"
 
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
@@ -87,12 +87,6 @@ func getuser() User {
 	if err != nil {
 		panic(fmt.Sprintf("Failed to unmarshal Record, %v", err))
 	}
-
-	fmt.Println("Found user:")
-	fmt.Println("UserId:  ", user.UserId)
-	fmt.Println("DeviceId: ", user.DeviceId)
-	fmt.Println("FirstName:  ", user.FirstName)
-	fmt.Println("LastName:", user.LastName)
 
 	return user
 }
