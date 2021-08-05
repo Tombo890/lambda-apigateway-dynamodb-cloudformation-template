@@ -15,15 +15,15 @@ Resources:
       CodeUri: UsersFunction
       Handler: users
       Runtime: go1.x
-      Role:
-        Ref: Lambda_FullAccess
       Tracing: Active
       Events:
         CatchAll:
           Type: Api
           Properties:
-            Path: /users
+            Path: /users/{userId}
             Method: GET
+            RequestParameters:
+            - method.request.path
       Environment:
         Variables:
           PARAM1: VALUE
