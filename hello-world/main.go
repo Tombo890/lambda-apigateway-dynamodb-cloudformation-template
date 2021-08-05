@@ -34,6 +34,8 @@ type User struct {
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
+	userId := request.QueryStringParameters["userId"]
+	fmt.Println(userId)
 	user := getuser()
 	formatedUser, err := json.Marshal(user)
 
