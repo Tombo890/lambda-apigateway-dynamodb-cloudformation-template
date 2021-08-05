@@ -27,10 +27,7 @@ Resources:
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           PARAM1: VALUE
-  LambdaRole:
-    Type: AWS::IAM::ROLE
-    Properties:
-      RoleName: Lambda_FullAccess
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
@@ -41,6 +38,6 @@ Outputs:
   UsersFunction:
     Description: "Users Lambda Function ARN"
     Value: !GetAtt UsersFunction.Arn
-  #UsersFunctionIamRole:
-  #  Description: "Implicit IAM Role created for Users function"
-  #  Value: !GetAtt UsersFunctionRole.Arn
+  UsersFunctionIamRole:
+    Description: "Implicit IAM Role created for Users function"
+    Value: !GetAtt UsersFunctionRole.Arn
