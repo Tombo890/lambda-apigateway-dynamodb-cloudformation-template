@@ -14,6 +14,7 @@ Resources:
   UsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
+      RoleName: Lambda_FullAccess
       CodeUri: users/
       Handler: users
       Runtime: go1.x
@@ -38,6 +39,6 @@ Outputs:
   UsersFunction:
     Description: "Users Lambda Function ARN"
     Value: !GetAtt UsersFunction.Arn
-  UsersFunctionIamRole:
-    Description: "Implicit IAM Role created for Users function"
-    Value: !GetAtt UsersFunctionRole.Arn
+  #UsersFunctionIamRole:
+  #  Description: "Implicit IAM Role created for Users function"
+  #  Value: !GetAtt UsersFunctionRole.Arn
