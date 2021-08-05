@@ -36,5 +36,5 @@ Outputs:
     Description: Implicit IAM Role created for the Users function
     Value:
       Fn::GetAtt:
-      - UsersFunctionRole
+      - LambdaRole
       - Arn
