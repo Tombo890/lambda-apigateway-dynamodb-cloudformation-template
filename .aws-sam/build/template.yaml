@@ -1,44 +1,40 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'GO_fun
-
-  Sample SAM Template for GO_fun
-
-  '
+Description: Function responsible for user information
 Globals:
   Function:
     Timeout: 5
 Resources:
-  HelloWorldFunction:
+  UserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: HelloWorldFunction
-      Handler: hello-world
+      CodeUri: UserFunction
+      Handler: users
       Runtime: go1.x
       Tracing: Active
       Events:
         CatchAll:
           Type: Api
           Properties:
-            Path: /hello
+            Path: /users/{userId}
             Method: GET
       Environment:
         Variables:
           PARAM1: VALUE
 Outputs:
-  HelloWorldAPI:
-    Description: API Gateway endpoint URL for Prod environment for First Function
+  UsersAPI:
+    Description: API Gateway endpoint URL for Prod environment for the Users Function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
-  HelloWorldFunction:
-    Description: First Lambda Function ARN
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users/1
+  UsersFunction:
+    Description: Users Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - HelloWorldFunction
+      - UsersFunction
       - Arn
-  HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for Hello World function
+  UsersFunctionIamRole:
+    Description: Implicit IAM Role created for the Users function
     Value:
       Fn::GetAtt:
-      - HelloWorldFunctionRole
+      - UsersFunctionRole
       - Arn
