@@ -82,7 +82,7 @@ func getuser() string {
 		TableName: aws.String(tableName),
 		Key: map[string]*dynamodb.AttributeValue{
 			"UserId": {
-				N: aws.String(userId),
+				S: aws.String(userId),
 			},
 			"DeviceId": {
 				S: aws.String(deviceId),
