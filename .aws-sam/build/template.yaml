@@ -13,7 +13,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: UsersFunction
-      Handler: users
+      Handler: getUsers
       Runtime: go1.x
       Tracing: Active
       Events:
@@ -22,6 +22,9 @@ Resources:
           Properties:
             Path: /users
             Method: GET
+      Environment:
+        Variables:
+          TABLE: Users
 Outputs:
   UsersAPI:
     Description: API Gateway endpoint URL for Prod environment for Users Function
