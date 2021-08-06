@@ -24,8 +24,8 @@ type User struct {
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	userId := request.PathParameters["userId"]
-	deviceId := request.PathParameters["deviceId"]
+	userId := request.QueryStringParameters["userId"]
+	deviceId := request.QueryStringParameters["deviceId"]
 	fmt.Println("User: " + userId)
 	fmt.Println("Device: " + deviceId)
 
@@ -75,6 +75,9 @@ func getuser(userId string, deviceId string) User {
 			Key: map[string]*dynamodb.AttributeValue{
 				"UserId": {
 					S: aws.String(userId),
+				},
+				"DeviceId": {
+					S: aws.String("1"),
 				},
 			},
 		})
