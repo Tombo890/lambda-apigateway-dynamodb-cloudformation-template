@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 
@@ -14,16 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-var (
-	// DefaultHTTPGetAddress Default Address
-	DefaultHTTPGetAddress = "https://checkip.amazonaws.com"
-
-	// ErrNoIP No IP found in response
-	ErrNoIP = errors.New("No IP in HTTP response")
-
-	// ErrNon200Response non 200 status code in response
-	ErrNon200Response = errors.New("Non 200 Response found")
-)
+const tableName = "Users"
 
 type User struct {
 	UserId    string
@@ -39,7 +29,20 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	fmt.Println("User: " + userId)
 	fmt.Println("Device: " + deviceId)
 
+	if userId == "" {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 422,
+		}, nil
+	}
+
 	user := getuser(userId, deviceId)
+
+	if user == (User{}) {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 404,
+		}, nil
+	}
+
 	formatedUser, err := json.Marshal(user)
 
 	if err != nil {
@@ -55,7 +58,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 func getuser(userId string, deviceId string) User {
 
 	// Initialize a session that the SDK will use to load
-	// credentials from the shared credentials file ~/.aws/credentials
+	// credentials from the shared credentials file ~/.aws/credentials    <- make sure you declaring the profile when running locally or using default
 	// and region from the shared configuration file ~/.aws/config.
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
@@ -63,20 +66,32 @@ func getuser(userId string, deviceId string) User {
 
 	// Create DynamoDB client
 	svc := dynamodb.New(sess)
+	var result *dynamodb.GetItemOutput
+	var err error
 
-	tableName := "Users"
+	if deviceId == "" {
+		result, err = svc.GetItem(&dynamodb.GetItemInput{
+			TableName: aws.String(tableName),
+			Key: map[string]*dynamodb.AttributeValue{
+				"UserId": {
+					S: aws.String(userId),
+				},
+			},
+		})
+	} else {
+		result, err = svc.GetItem(&dynamodb.GetItemInput{
+			TableName: aws.String(tableName),
+			Key: map[string]*dynamodb.AttributeValue{
+				"UserId": {
+					S: aws.String(userId),
+				},
+				"DeviceId": {
+					S: aws.String(deviceId),
+				},
+			},
+		})
+	}
 
-	result, err := svc.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String(tableName),
-		Key: map[string]*dynamodb.AttributeValue{
-			"UserId": {
-				S: aws.String(userId),
-			},
-			"DeviceId": {
-				S: aws.String(deviceId),
-			},
-		},
-	})
 	if err != nil {
 		log.Fatalf("Got error calling GetUser: %s", err)
 	}
