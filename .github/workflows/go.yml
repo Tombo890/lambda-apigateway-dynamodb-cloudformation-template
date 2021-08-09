@@ -19,7 +19,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - run: go test -v .
+      - run: go test -v ./...
       
   deploy:
     needs: [build, test]
