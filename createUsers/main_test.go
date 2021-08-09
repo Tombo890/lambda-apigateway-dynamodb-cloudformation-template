@@ -4,44 +4,34 @@ import (
 	"GO_fun/models"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 )
 
-type mockedGetItem struct {
+type mockedPutItem struct {
 	dynamodbiface.DynamoDBAPI
-	Response dynamodb.GetItemOutput
+	Response dynamodb.PutItemOutput
 }
 
-func (mockedOutput mockedGetItem) GetItem(in *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error) {
+func (mockedOutput mockedPutItem) PutItem(in *dynamodb.PutItemInput) (*dynamodb.PutItemOutput, error) {
 	return &mockedOutput.Response, nil
 }
 
 func TestHandler(t *testing.T) {
-	userId := "1"
+
 	deviceId := "1"
 	firstName := "Some"
 	lastName := "Guy"
 
+	userWithoutIdToCreate := models.User{
+		DeviceId:  deviceId,
+		FirstName: firstName,
+		LastName:  lastName,
+	}
+
 	t.Run("Successful Request", func(t *testing.T) {
-		mock := mockedGetItem{
-			Response: dynamodb.GetItemOutput{
-				Item: map[string]*dynamodb.AttributeValue{
-					"UserId": {
-						S: aws.String(userId),
-					},
-					"DeviceId": {
-						S: aws.String(deviceId),
-					},
-					"FirstName": {
-						S: aws.String(firstName),
-					},
-					"LastName": {
-						S: aws.String(lastName),
-					},
-				},
-			},
+		mock := mockedPutItem{
+			Response: dynamodb.PutItemOutput{},
 		}
 
 		depend := dependencies{
@@ -49,7 +39,7 @@ func TestHandler(t *testing.T) {
 			table: "test_table",
 		}
 
-		returnUser := depend.GetUser(userId, deviceId)
+		returnUser := depend.CreateUser(userWithoutIdToCreate)
 
 		if returnUser == (models.User{}) {
 			t.Fatal("Something Wrong, panic!!!")
@@ -59,8 +49,8 @@ func TestHandler(t *testing.T) {
 			t.Fatal("FirstName didn't match")
 		} else if returnUser.LastName != lastName {
 			t.Fatal("LastName didn't match")
-		} else if returnUser.UserId != userId {
-			t.Fatal("UserId didn't match")
+		} else if returnUser.UserId == "" {
+			t.Fatal("UserId wasn't created")
 		}
 	})
 }
