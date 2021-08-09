@@ -9,12 +9,13 @@ Globals:
   Function:
     Timeout: 5
 Resources:
-  UsersFunction:
+  UsersGetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: UsersFunction
+      CodeUri: UsersGetFunction
       Handler: getUsers
       Runtime: go1.x
+      Policies: AmazonDynamoDBFullAccess
       Tracing: Active
       Events:
         GetUser:
@@ -25,6 +26,43 @@ Resources:
       Environment:
         Variables:
           TABLE: Users
+  UsersPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: UsersPostFunction
+      Handler: postUsers
+      Runtime: go1.x
+      Policies: AmazonDynamoDBFullAccess
+      Tracing: Active
+      Events:
+        PostUser:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: POST
+      Environment:
+        Variables:
+          TABLE: Users
+  GatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Models:
+        User:
+          type: object
+          required:
+          - DeviceId
+          - FirstName
+          - LastName
+          properties:
+            UserId:
+              type: string
+            DeviceId:
+              type: string
+            FirstName:
+              type: string
+            LastName:
+              type: string
 Outputs:
   UsersAPI:
     Description: API Gateway endpoint URL for Prod environment for Users Function
