@@ -1,6 +1,7 @@
 package main
 
 import (
+	"GO_fun/models"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -20,14 +21,7 @@ type dependencies struct {
 	table string
 }
 
-type user struct {
-	UserId    string
-	DeviceId  string
-	FirstName string
-	LastName  string
-}
-
-func (depend *dependencies) GetUser(userId string, deviceId string) user {
+func (depend *dependencies) GetUser(userId string, deviceId string) models.User {
 
 	if depend.ddb == nil {
 		// Initialize a session that the SDK will use to load
@@ -62,7 +56,7 @@ func (depend *dependencies) GetUser(userId string, deviceId string) user {
 		log.Fatalf("Got error calling GetUser: %s", err)
 	}
 
-	userRecord := user{}
+	userRecord := models.User{}
 
 	err = dynamodbattribute.UnmarshalMap(result.Item, &userRecord)
 	if err != nil {
@@ -86,7 +80,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	depend := dependencies{}
 	userRecord := depend.GetUser(userId, deviceId)
 
-	if userRecord == (user{}) {
+	if userRecord == (models.User{}) {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 404,
 		}, nil

@@ -20,6 +20,15 @@ jobs:
         aws-region: us-west-1
     # sam build 
     - run: sam build
-   
-# sam deploy
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: go test -v ./...
+      
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: aws-actions/setup-sam@v1
+    - uses: aws-actions/configure-aws-credentials@v1
     - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name prod-users-func --s3-bucket serverlessplayground --capabilities CAPABILITY_IAM --region us-west-1 
