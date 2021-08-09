@@ -47,29 +47,29 @@ Resources:
         Variables:
           TABLE: "Users"
 
-  GatewayApi:
-    Type: AWS::Serverless::Api
-    DependsOn:
-      - GetUsersFunction
-      - CreateUsersFunction
-    Properties: 
-      StageName: Prod
-      Models:
-        User:
-          type: object
-          required: # Can leave this section out if there are no required Properties in the list below
-            - DeviceId
-            - FirstName
-            - LastName
-          properties:
-            UserId:
-              type: string
-            DeviceId:
-              type: string
-            FirstName:
-              type: string
-            LastName:
-              type: string
+  # GatewayApi:
+  #   Type: AWS::Serverless::Api
+  #   DependsOn:
+  #     - GetUsersFunction
+  #     - CreateUsersFunction
+  #   Properties: 
+  #     StageName: Prod
+  #     Models:
+  #       User:
+  #         type: object
+  #         required: # Can leave this section out if there are no required Properties in the list below
+  #           - DeviceId
+  #           - FirstName
+  #           - LastName
+  #         properties:
+  #           UserId:
+  #             type: string
+  #           DeviceId:
+  #             type: string
+  #           FirstName:
+  #             type: string
+  #           LastName:
+  #             type: string
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

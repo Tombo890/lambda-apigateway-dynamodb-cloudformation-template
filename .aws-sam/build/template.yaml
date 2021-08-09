@@ -9,10 +9,10 @@ Globals:
   Function:
     Timeout: 5
 Resources:
-  UsersGetFunction:
+  GetUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: UsersGetFunction
+      CodeUri: GetUsersFunction
       Handler: getUsers
       Runtime: go1.x
       Policies: AmazonDynamoDBFullAccess
@@ -26,11 +26,11 @@ Resources:
       Environment:
         Variables:
           TABLE: Users
-  UsersPostFunction:
+  CreateUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: UsersPostFunction
-      Handler: postUsers
+      CodeUri: CreateUsersFunction
+      Handler: createUsers
       Runtime: go1.x
       Policies: AmazonDynamoDBFullAccess
       Tracing: Active
@@ -43,40 +43,20 @@ Resources:
       Environment:
         Variables:
           TABLE: Users
-  GatewayApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      Models:
-        User:
-          type: object
-          required:
-          - DeviceId
-          - FirstName
-          - LastName
-          properties:
-            UserId:
-              type: string
-            DeviceId:
-              type: string
-            FirstName:
-              type: string
-            LastName:
-              type: string
 Outputs:
   UsersAPI:
     Description: API Gateway endpoint URL for Prod environment for Users Function
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users/
-  UsersFunction:
-    Description: Users Lambda Function ARN
+  GetUsersFunction:
+    Description: GetUsers Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - UsersFunction
+      - GetUsersFunction
       - Arn
-  UsersFunctionIamRole:
-    Description: Implicit IAM Role created for Users function
+  CreateUsersFunction:
+    Description: CreateUsers Lambda Function ARN
     Value:
       Fn::GetAtt:
-      - UsersFunctionRole
+      - CreateUsersFunction
       - Arn
