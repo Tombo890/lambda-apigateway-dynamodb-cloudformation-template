@@ -49,6 +49,9 @@ Resources:
 
   GatewayApi:
     Type: AWS::Serverless::Api
+    DependsOn:
+      - "GetUsersFunction"
+      - "CreateUsersFunction"
     Properties: 
       StageName: Prod
       Models:
