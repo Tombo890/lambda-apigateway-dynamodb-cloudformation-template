@@ -81,6 +81,3 @@ Outputs:
   CreateUsersFunction:
     Description: "CreateUsers Lambda Function ARN"
     Value: !GetAtt CreateUsersFunction.Arn
-  UsersFunctionIamRole:
-    Description: "Implicit IAM Role created for Users function"
-    Value: !GetAtt UsersFunctionRole.Arn
