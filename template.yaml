@@ -11,7 +11,7 @@ Globals:
     Timeout: 5
 
 Resources:
-  UsersGetFunction:
+  GetUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: getUsers/
@@ -29,11 +29,11 @@ Resources:
         Variables:
           TABLE: "Users"
 
-  UsersPostFunction:
+  CreateUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: postUsers/
-      Handler: postUsers
+      CodeUri: createUsers/
+      Handler: createUsers
       Runtime: go1.x
       Policies: AmazonDynamoDBFullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
@@ -75,9 +75,12 @@ Outputs:
   UsersAPI:
     Description: "API Gateway endpoint URL for Prod environment for Users Function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users/"
-  UsersFunction:
-    Description: "Users Lambda Function ARN"
-    Value: !GetAtt UsersFunction.Arn
+  GetUsersFunction:
+    Description: "GetUsers Lambda Function ARN"
+    Value: !GetAtt GetUsersFunction.Arn
+  CreateUsersFunction:
+    Description: "CreateUsers Lambda Function ARN"
+    Value: !GetAtt CreateUsersFunction.Arn
   UsersFunctionIamRole:
     Description: "Implicit IAM Role created for Users function"
     Value: !GetAtt UsersFunctionRole.Arn

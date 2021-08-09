@@ -21,7 +21,7 @@ type dependencies struct {
 	table string
 }
 
-func (depend *dependencies) PostUser(userToSave models.User) models.User {
+func (depend *dependencies) CreateUser(userToSave models.User) models.User {
 
 	if depend.ddb == nil {
 		// Initialize a session that the SDK will use to load
@@ -75,7 +75,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	depend := dependencies{}
-	userRecord := depend.PostUser(passedUser)
+	userRecord := depend.CreateUser(passedUser)
 
 	if userRecord == (models.User{}) {
 		return events.APIGatewayProxyResponse{
