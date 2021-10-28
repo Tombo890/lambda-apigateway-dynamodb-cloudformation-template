@@ -127,7 +127,7 @@ Resources:
     Properties:
       FunctionName: GetUsers
       Role: !GetAtt UserFunctionsRole.Arn
-      CodeUri: getUsers/
+      CodeUri: getUsers/{UserId}
       Handler: getUsers
       Runtime: go1.x
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
@@ -140,7 +140,7 @@ Resources:
     Properties:
       FunctionName: CreateUsers
       Role: !GetAtt UserFunctionsRole.Arn
-      CodeUri: createUsers/
+      CodeUri: createUsers/{UserId}
       Handler: createUsers
       Runtime: go1.x
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
