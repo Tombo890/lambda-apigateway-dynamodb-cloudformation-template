@@ -76,6 +76,7 @@ Resources:
                   in: body
                   description: User object
                   schema:
+                    name: User
                     type: object
                     required:
                       - DeviceId
@@ -125,6 +126,20 @@ Resources:
                   description: Not Found
                 "200":
                   description: OK
+                  body:
+                    application/json:
+                      schema:
+                        name: User
+                        type: object
+                        properties:
+                          UserId:
+                            type: string
+                          DeviceId:
+                            type: string
+                          FirstName:
+                            type: string
+                          LastName:
+                            type: string
         swagger: '2.0'
 
   GetUsersFunction:
