@@ -73,21 +73,21 @@ Resources:
                 arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
               parameters:
                 - schema:
-                  required:
-                    - DeviceId
-                    - FirstName
-                    - LastName
-                  type: object
-                  name: User
-                  properties:
-                    LastName:
-                      type: string
-                    UserId:
-                      type: string
-                    DeviceId:
-                      type: string
-                    FirstName:
-                      type: string
+                    required:
+                      - DeviceId
+                      - FirstName
+                      - LastName
+                    type: object
+                    name: User
+                    properties:
+                      LastName:
+                        type: string
+                      UserId:
+                        type: string
+                      DeviceId:
+                        type: string
+                      FirstName:
+                        type: string
                   description: User object
                   name: user
                   in: body
