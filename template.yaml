@@ -9,6 +9,11 @@ Description: >
 Globals:
   Function:
     Timeout: 5
+# AWS::Lambda::Permission (for each func)
+# AWS::IAM::Role
+# AWS::ApiGateway::RestApi
+# AWS::ApiGateway::Deployment
+# AWS::ApiGateway::Stage
 
 Resources:
   UserS3Bucket:
@@ -33,7 +38,6 @@ Resources:
       CodeUri: getUsers/
       Handler: getUsers
       Runtime: go1.x
-      Role: !Ref arn:aws:iam::322414723711:role/Lambda_FullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         GetUser:
@@ -45,6 +49,14 @@ Resources:
         Variables:
           TABLE: "Users"
 
+  CreateUsersFunctionPostUserPermissionProd:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Name: CreateUsersFunctionPostUserPermissionProd
+      FunctionName: !Ref CreateUsersFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !GetAtt CreateUsersFunction.Arn
   CreateUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -52,7 +64,6 @@ Resources:
       CodeUri: createUsers/
       Handler: createUsers
       Runtime: go1.x
-      Role: !Ref arn:aws:iam::322414723711:role/Lambda_FullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         PostUser:
