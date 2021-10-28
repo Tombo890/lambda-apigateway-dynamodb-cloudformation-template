@@ -10,15 +10,15 @@ Globals:
   Function:
     Timeout: 5
 # AWS::Lambda::Permission (for each func)
-# AWS::IAM::Role
 # AWS::ApiGateway::RestApi
 # AWS::ApiGateway::Deployment
 # AWS::ApiGateway::Stage
 
 Resources:
-  LambdaRole:
+  UserFunctionsRole:
     Type: 'AWS::IAM::Role'
     Properties:
+      RoleName: UserFunctionsRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -35,6 +35,7 @@ Resources:
       Tags:
         - Value: SAM
           Key: 'lambda:createdBy'
+
   UserS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -50,11 +51,12 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+
   GetUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       FunctionName: GetUsers
-      Role: !GetAtt LambdaRole.Arn
+      Role: !GetAtt UserFunctionsRole.Arn
       CodeUri: getUsers/
       Handler: getUsers
       Runtime: go1.x
@@ -81,7 +83,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       FunctionName: CreateUsers
-      Role: !GetAtt LambdaRole.Arn
+      Role: !GetAtt UserFunctionsRole.Arn
       CodeUri: createUsers/
       Handler: createUsers
       Runtime: go1.x
