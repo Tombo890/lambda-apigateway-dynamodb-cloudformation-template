@@ -62,7 +62,7 @@ Resources:
           version: '1.0.0'
           title: "Users"
         paths:
-          /users/{UserId}:
+          /users:
             post:
               summary: Create a new user
               x-amazon-apigateway-integration:
@@ -72,17 +72,25 @@ Resources:
               uri: !Sub >-
                 arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
               parameters:
-                - name: UserId
-                  in: path
-                  description: The id of the user
-                  required: true
-                  schema:
-                    type: string
-                - name: user
-                  in: query
+                - schema:
+                  required:
+                    - DeviceId
+                    - FirstName
+                    - LastName
+                  type: object
+                  name: User
+                  properties:
+                    LastName:
+                      type: string
+                    UserId:
+                      type: string
+                    DeviceId:
+                      type: string
+                    FirstName:
+                      type: string
                   description: User object
-                  schema:
-                    $ref: "#/components/schemas/User"
+                  name: user
+                  in: body
               responses:
                 "422":
                   description: Unprocessable Entity
@@ -99,12 +107,18 @@ Resources:
                 uri: !Sub >-
                   arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUsersFunction.Arn}/invocations
                 parameters:
-                  - name: UserId
-                    in: path
-                    description: The id of the user
-                    required: true
-                    schema:
+                  - schema:
                       type: string
+                    required: true
+                    description: The id of the user
+                    name: UserId
+                    in: path
+                  - schema:
+                      type: string
+                    required: true
+                    description: The id of the device
+                    name: DeviceId
+                    in: path
                 responses:
                   "422":
                     description: Unprocessable Entity
@@ -112,22 +126,20 @@ Resources:
                     description: Not Found
                   "200":
                     description: OK
-                    schema:
-                      content:
-                        application/json:
-                          schema:
-                            $ref: "#/components/schemas/User"
-        components:
-          schemas:
-            User:
-              type: object
-              properties:
-                UserId:
-                  type: string
-                FirstName:
-                  type: string
-                LastName:
-                  type: string
+                    body:
+                      application/json:
+                        schema:
+                          type: object
+                          name: User
+                          properties:
+                            LastName:
+                              type: string
+                            UserId:
+                              type: string
+                            DeviceId:
+                              type: string
+                            FirstName:
+                              type: string
         openapi: '3.0.3'
 
   GetUsersFunction:
