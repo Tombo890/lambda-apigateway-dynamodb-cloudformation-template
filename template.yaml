@@ -76,7 +76,20 @@ Resources:
                   in: body
                   description: User object
                   schema:
-                    $ref: '#/Models/Schemas/User'
+                    type: object
+                    required:
+                      - DeviceId
+                      - FirstName
+                      - LastName
+                    properties:
+                      UserId:
+                        type: string
+                      DeviceId:
+                        type: string
+                      FirstName:
+                        type: string
+                      LastName:
+                        type: string
               responses:
                 "422":
                   description: Unprocessable Entity
@@ -140,23 +153,6 @@ Resources:
         Variables:
           TABLE: "Users" 
 
-Models:
-  Schemas:
-    User:
-      type: object
-      required:
-        - DeviceId
-        - FirstName
-        - LastName
-      properties:
-        UserId:
-          type: string
-        DeviceId:
-          type: string
-        FirstName:
-          type: string
-        LastName:
-          type: string
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
