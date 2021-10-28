@@ -25,6 +25,7 @@ Resources:
   GetUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
+      FunctionName: GetUsers
       CodeUri: getUsers/
       Handler: getUsers
       Runtime: go1.x
@@ -43,6 +44,7 @@ Resources:
   CreateUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
+      FunctionName: CreateUsers
       CodeUri: createUsers/
       Handler: createUsers
       Runtime: go1.x
