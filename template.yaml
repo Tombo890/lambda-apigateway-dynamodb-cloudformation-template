@@ -82,15 +82,7 @@ Resources:
                   in: query
                   description: User object
                   schema:
-                    type: object
-                    required:
-                      - FirstName
-                      - LastName
-                    properties:
-                      FirstName:
-                        type: string
-                      LastName:
-                        type: string
+                    $ref: "#/components/schemas/User"
               responses:
                 "422":
                   description: Unprocessable Entity
@@ -120,6 +112,22 @@ Resources:
                     description: Not Found
                   "200":
                     description: OK
+                    schema:
+                      content:
+                        application/json:
+                          schema:
+                            $ref: "#/components/schemas/User"
+        components:
+          schemas:
+            User:
+              type: object
+              properties:
+                UserId:
+                  type: string
+                FirstName:
+                  type: string
+                LastName:
+                  type: string
         openapi: '3.0.3'
 
   GetUsersFunction:
@@ -127,7 +135,7 @@ Resources:
     Properties:
       FunctionName: GetUsers
       Role: !GetAtt UserFunctionsRole.Arn
-      CodeUri: getUsers/{UserId}
+      CodeUri: getUsers/
       Handler: getUsers
       Runtime: go1.x
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
@@ -140,7 +148,7 @@ Resources:
     Properties:
       FunctionName: CreateUsers
       Role: !GetAtt UserFunctionsRole.Arn
-      CodeUri: createUsers/{UserId}
+      CodeUri: createUsers/
       Handler: createUsers
       Runtime: go1.x
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
