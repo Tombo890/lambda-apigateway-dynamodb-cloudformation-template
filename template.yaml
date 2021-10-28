@@ -33,7 +33,7 @@ Resources:
       CodeUri: getUsers/
       Handler: getUsers
       Runtime: go1.x
-      Role: !Ref Lambda_FullAccess
+      Role: !Ref arn:aws:iam::322414723711:role/Lambda_FullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         GetUser:
@@ -52,7 +52,7 @@ Resources:
       CodeUri: createUsers/
       Handler: createUsers
       Runtime: go1.x
-      Role: !Ref Lambda_FullAccess
+      Role: !Ref arn:aws:iam::322414723711:role/Lambda_FullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         PostUser:
