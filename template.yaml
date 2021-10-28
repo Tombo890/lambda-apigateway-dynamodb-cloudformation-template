@@ -16,6 +16,25 @@ Globals:
 # AWS::ApiGateway::Stage
 
 Resources:
+  LambdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+        - 'arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess'
+        - 'arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess'
+      Tags:
+        - Value: SAM
+          Key: 'lambda:createdBy'
   UserS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -35,6 +54,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       FunctionName: GetUsers
+      Role: !GetAtt LambdaRole.Arn
       CodeUri: getUsers/
       Handler: getUsers
       Runtime: go1.x
@@ -49,18 +69,19 @@ Resources:
         Variables:
           TABLE: "Users"
 
-  CreateUsersFunctionPostUserPermissionProd:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Name: CreateUsersFunctionPostUserPermissionProd
-      FunctionName: !Ref CreateUsersFunction
-      Action: lambda:InvokeFunction
-      Principal: apigateway.amazonaws.com
-      SourceArn: !GetAtt CreateUsersFunction.Arn
+  # CreateUsersFunctionPostUserPermissionProd:
+  #   Type: AWS::Lambda::Permission
+  #   Properties:
+  #     Name: CreateUsersFunctionPostUserPermissionProd
+  #     FunctionName: !Ref CreateUsersFunction
+  #     Action: lambda:InvokeFunction
+  #     Principal: apigateway.amazonaws.com
+  #     SourceArn: !GetAtt CreateUsersFunction.Arn
   CreateUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       FunctionName: CreateUsers
+      Role: !GetAtt LambdaRole.Arn
       CodeUri: createUsers/
       Handler: createUsers
       Runtime: go1.x
