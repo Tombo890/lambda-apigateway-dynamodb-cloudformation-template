@@ -25,7 +25,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-1
+          aws-region: us-east-1
       - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name prod-users-func --s3-bucket serverlessplayground --capabilities CAPABILITY_IAM --region us-west-1 
 
   # You can run these steps all in one job like above which is faster, or seperate them into multiple jobs like below
