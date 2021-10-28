@@ -62,31 +62,31 @@ Resources:
           version: '1.0.0'
           title: "Users"
         paths:
-          /users:
+          /users/{UserId}:
             post:
               summary: Create a new user
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub >-
-                  arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
               operationId: createUser
+              uri: !Sub >-
+                arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
               parameters:
+                - name: UserId
+                  in: path
+                  description: The id of the user
+                  required: true
+                  schema:
+                    type: string
                 - name: user
-                  in: body
+                  in: query
                   description: User object
                   schema:
-                    name: User
                     type: object
                     required:
-                      - DeviceId
                       - FirstName
                       - LastName
                     properties:
-                      UserId:
-                        type: string
-                      DeviceId:
-                        type: string
                       FirstName:
                         type: string
                       LastName:
@@ -99,48 +99,28 @@ Resources:
                 "201":
                   description: Created
             get:
-              summary: Get a user by id
-              x-amazon-apigateway-integration:
-                httpMethod: GET
-                type: aws_proxy
+                summary: Get a user by id
+                x-amazon-apigateway-integration:
+                  httpMethod: GET
+                  type: aws_proxy
+                operationId: getUserById
                 uri: !Sub >-
                   arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUsersFunction.Arn}/invocations
-              operationId: getUserById
-              parameters:
-                - name: UserId
-                  in: path
-                  description: The id of the user
-                  required: true
-                  schema:
-                    type: string
-                - name: DeviceId
-                  in: path
-                  description: The id of the device
-                  required: true
-                  schema:
-                    type: string
-              responses:
-                "422":
-                  description: Unprocessable Entity
-                "404":
-                  description: Not Found
-                "200":
-                  description: OK
-                  body:
-                    application/json:
-                      schema:
-                        name: User
-                        type: object
-                        properties:
-                          UserId:
-                            type: string
-                          DeviceId:
-                            type: string
-                          FirstName:
-                            type: string
-                          LastName:
-                            type: string
-        swagger: '2.0'
+                parameters:
+                  - name: UserId
+                    in: path
+                    description: The id of the user
+                    required: true
+                    schema:
+                      type: string
+                responses:
+                  "422":
+                    description: Unprocessable Entity
+                  "404":
+                    description: Not Found
+                  "200":
+                    description: OK
+        openapi: '3.0.3'
 
   GetUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
