@@ -9,45 +9,112 @@ Globals:
   Function:
     Timeout: 5
 Resources:
+  UserFunctionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: UserFunctionsRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      Tags:
+      - Value: SAM
+        Key: lambda:createdBy
+  UserS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: paxi-users
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  UsersApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: UsersApi
+      Mode: overwrite
+      Body:
+        info:
+          version: 1.0.0
+          title: Users
+        paths:
+          /users:
+            post:
+              summary: Create a new user
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
+              responses:
+                '422':
+                  description: Unprocessable Entity
+                '404':
+                  description: Not Found
+                '201':
+                  description: Created
+            get:
+              summary: Get a user by id
+              x-amazon-apigateway-integration:
+                httpMethod: GET
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUsersFunction.Arn}/invocations
+              responses:
+                '422':
+                  description: Unprocessable Entity
+                '404':
+                  description: Not Found
+                '200':
+                  description: OK
+        swagger: '2.0'
   GetUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: GetUsers
+      Role:
+        Fn::GetAtt:
+        - UserFunctionsRole
+        - Arn
       CodeUri: GetUsersFunction
       Handler: getUsers
       Runtime: go1.x
-      Policies: AmazonDynamoDBFullAccess
       Tracing: Active
-      Events:
-        GetUser:
-          Type: Api
-          Properties:
-            Path: /users
-            Method: GET
       Environment:
         Variables:
           TABLE: Users
   CreateUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: CreateUsers
+      Role:
+        Fn::GetAtt:
+        - UserFunctionsRole
+        - Arn
       CodeUri: CreateUsersFunction
       Handler: createUsers
       Runtime: go1.x
-      Policies: AmazonDynamoDBFullAccess
       Tracing: Active
-      Events:
-        PostUser:
-          Type: Api
-          Properties:
-            Path: /users
-            Method: POST
       Environment:
         Variables:
           TABLE: Users
 Outputs:
-  UsersAPI:
-    Description: API Gateway endpoint URL for Prod environment for Users Function
-    Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users/
   GetUsersFunction:
     Description: GetUsers Lambda Function ARN
     Value:
