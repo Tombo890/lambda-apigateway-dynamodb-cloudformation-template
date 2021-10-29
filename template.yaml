@@ -108,13 +108,13 @@ Resources:
                   arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUsersFunction.Arn}/invocations
                 parameters:
                   - schema:
-                    type: string
+                      type: string
                     required: true
                     description: The id of the user
                     name: UserId
                     in: path
                   - schema:
-                    type: string
+                      type: string
                     required: true
                     description: The id of the device
                     name: DeviceId
