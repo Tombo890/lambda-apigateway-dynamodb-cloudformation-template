@@ -69,8 +69,7 @@ Resources:
                 httpMethod: POST
                 type: aws_proxy
               operationId: createUser
-              uri: !Sub >-
-                arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
+              uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
               parameters:
                 - schema:
                     required:
@@ -104,8 +103,7 @@ Resources:
                   httpMethod: GET
                   type: aws_proxy
                 operationId: getUserById
-                uri: !Sub >-
-                  arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUsersFunction.Arn}/invocations
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUsersFunction.Arn}/invocations
                 parameters:
                   - schema:
                       type: string
@@ -126,7 +124,7 @@ Resources:
                     description: Not Found
                   "200":
                     description: OK
-                    body:
+                    content:
                       application/json:
                         schema:
                           type: object
