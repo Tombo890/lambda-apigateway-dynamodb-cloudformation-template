@@ -4,15 +4,10 @@ Description: >
   GO_fun
   
   Sample SAM Template for GO_fun
-
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 5
-# AWS::Lambda::Permission (for each func)
-# AWS::ApiGateway::RestApi
-# AWS::ApiGateway::Deployment
-# AWS::ApiGateway::Stage
 
 Resources:
   UserFunctionsRole:
@@ -68,28 +63,7 @@ Resources:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-              operationId: createUser
-              uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
-              parameters:
-                - schema:
-                    required:
-                      - DeviceId
-                      - FirstName
-                      - LastName
-                    type: object
-                    name: User
-                    properties:
-                      LastName:
-                        type: string
-                      UserId:
-                        type: string
-                      DeviceId:
-                        type: string
-                      FirstName:
-                        type: string
-                  description: User object
-                  name: user
-                  in: body
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUsersFunction.Arn}/invocations
               responses:
                 "422":
                   description: Unprocessable Entity
@@ -98,47 +72,19 @@ Resources:
                 "201":
                   description: Created
             get:
-                summary: Get a user by id
-                x-amazon-apigateway-integration:
-                  httpMethod: GET
-                  type: aws_proxy
-                operationId: getUserById
+              summary: Get a user by id
+              x-amazon-apigateway-integration:
+                httpMethod: GET
+                type: aws_proxy
                 uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUsersFunction.Arn}/invocations
-                parameters:
-                  - schema:
-                      type: string
-                    required: true
-                    description: The id of the user
-                    name: UserId
-                    in: path
-                  - schema:
-                      type: string
-                    required: true
-                    description: The id of the device
-                    name: DeviceId
-                    in: path
-                responses:
-                  "422":
-                    description: Unprocessable Entity
-                  "404":
-                    description: Not Found
-                  "200":
-                    description: OK
-                    content:
-                      application/json:
-                        schema:
-                          type: object
-                          name: User
-                          properties:
-                            LastName:
-                              type: string
-                            UserId:
-                              type: string
-                            DeviceId:
-                              type: string
-                            FirstName:
-                              type: string
-        openapi: '3.0.3'
+              responses:
+                "422":
+                  description: Unprocessable Entity
+                "404":
+                  description: Not Found
+                "200":
+                  description: OK
+        swagger: '2.0'
 
   GetUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
