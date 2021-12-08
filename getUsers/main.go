@@ -2,7 +2,6 @@ package main
 
 import (
 	"GO_fun/models"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -14,6 +13,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 type dependencies struct {
@@ -43,7 +44,7 @@ func (depend *dependencies) GetUser(userId string) models.User {
 	result, err := depend.ddb.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(depend.table),
 		Key: map[string]*dynamodb.AttributeValue{
-			"UserId": {
+			"Id": {
 				S: aws.String(userId),
 			},
 		},
@@ -82,7 +83,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
-	formatedUser, err := json.Marshal(userRecord)
+	formatedUser, err := jsoniter.Marshal(userRecord)
 
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
