@@ -74,8 +74,8 @@ Resources:
           TABLE: "Users"
           New_RELIC_ACCOUNT_ID: !Ref NRAccountId
           NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRAccountId
-      # LAYERS:
-      #   - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
