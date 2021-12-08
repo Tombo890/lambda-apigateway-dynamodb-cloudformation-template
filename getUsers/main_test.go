@@ -29,7 +29,7 @@ func TestHandler(t *testing.T) {
 		mock := mockedGetItem{
 			Response: dynamodb.GetItemOutput{
 				Item: map[string]*dynamodb.AttributeValue{
-					"UserId": {
+					"Id": {
 						S: aws.String(userId),
 					},
 					"Email": {
