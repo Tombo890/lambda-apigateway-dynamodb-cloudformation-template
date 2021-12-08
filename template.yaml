@@ -103,6 +103,18 @@ Resources:
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           TABLE: "Users"
+          New_RELIC_ACCOUNT_ID: !Ref NRAccountId
+          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRAccountId
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+          SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+    Logs:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        LogGroupName: {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "CreateUsers"}]]}
+        RetentionInDays: 7
 
   # GatewayApi:
   #   Type: AWS::Serverless::Api
