@@ -26,7 +26,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name users-functions --s3-bucket githubbuild --capabilities CAPABILITY_NAMED_IAM --region us-east-1 --parameter-overrides NRAccountId=${{ secrets.NEW_RELIC_ACCOUNT_ID }}
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name users-functions --s3-bucket githubbuild --capabilities CAPABILITY_NAMED_IAM --region us-east-1
 
   # You can run these steps all in one job like above which is faster, or seperate them into multiple jobs like below
   # test:
