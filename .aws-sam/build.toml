@@ -4,14 +4,16 @@
 [function_build_definitions.08855a18-bb4b-4151-a046-b6a7e6658a14]
 codeuri = "/Users/tomkline/Repos/Paxi/Playground/GO_fun/getUsers"
 runtime = "go1.x"
-source_md5 = ""
+architecture = "x86_64"
+manifest_hash = ""
 packagetype = "Zip"
 functions = ["GetUsersFunction"]
 
 [function_build_definitions.413fad72-1b33-426f-86c6-15f7fb82ff10]
 codeuri = "/Users/tomkline/Repos/Paxi/Playground/GO_fun/createUsers"
 runtime = "go1.x"
-source_md5 = ""
+architecture = "x86_64"
+manifest_hash = ""
 packagetype = "Zip"
 functions = ["CreateUsersFunction"]
 

@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"github.com/google/uuid"
 )
 
 type mockedGetItem struct {
@@ -19,10 +20,10 @@ func (mockedOutput mockedGetItem) GetItem(in *dynamodb.GetItemInput) (*dynamodb.
 }
 
 func TestHandler(t *testing.T) {
-	userId := "1"
-	deviceId := "1"
-	firstName := "Some"
-	lastName := "Guy"
+	userId := uuid.New().String()
+	email := "test@paxi.com"
+	plan := "Standard"
+	billingId := uuid.New().String()
 
 	t.Run("Successful Request", func(t *testing.T) {
 		mock := mockedGetItem{
@@ -31,14 +32,14 @@ func TestHandler(t *testing.T) {
 					"UserId": {
 						S: aws.String(userId),
 					},
-					"DeviceId": {
-						S: aws.String(deviceId),
+					"Email": {
+						S: aws.String(email),
 					},
-					"FirstName": {
-						S: aws.String(firstName),
+					"Plan": {
+						S: aws.String(plan),
 					},
-					"LastName": {
-						S: aws.String(lastName),
+					"BillingId": {
+						S: aws.String(billingId),
 					},
 				},
 			},
@@ -49,17 +50,11 @@ func TestHandler(t *testing.T) {
 			table: "test_table",
 		}
 
-		returnUser := depend.GetUser(userId, deviceId)
+		returnUser := depend.GetUser(userId)
 
 		if returnUser == (models.User{}) {
 			t.Fatal("Something Wrong, panic!!!")
-		} else if returnUser.DeviceId != deviceId {
-			t.Fatal("DeviceId didn't match")
-		} else if returnUser.FirstName != firstName {
-			t.Fatal("FirstName didn't match")
-		} else if returnUser.LastName != lastName {
-			t.Fatal("LastName didn't match")
-		} else if returnUser.UserId != userId {
+		} else if returnUser.Id != userId {
 			t.Fatal("UserId didn't match")
 		}
 	})

@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"github.com/google/uuid"
 )
 
 type mockedPutItem struct {
@@ -19,14 +20,14 @@ func (mockedOutput mockedPutItem) PutItem(in *dynamodb.PutItemInput) (*dynamodb.
 
 func TestHandler(t *testing.T) {
 
-	deviceId := "1"
-	firstName := "Some"
-	lastName := "Guy"
+	email := "test@paxi.com"
+	plan := "Standard"
+	billingId := uuid.New().String()
 
 	userWithoutIdToCreate := models.User{
-		DeviceId:  deviceId,
-		FirstName: firstName,
-		LastName:  lastName,
+		Email:     email,
+		Plan:      plan,
+		BillingId: billingId,
 	}
 
 	t.Run("Successful Request", func(t *testing.T) {
@@ -43,13 +44,7 @@ func TestHandler(t *testing.T) {
 
 		if returnUser == (models.User{}) {
 			t.Fatal("Something Wrong, panic!!!")
-		} else if returnUser.DeviceId != deviceId {
-			t.Fatal("DeviceId didn't match")
-		} else if returnUser.FirstName != firstName {
-			t.Fatal("FirstName didn't match")
-		} else if returnUser.LastName != lastName {
-			t.Fatal("LastName didn't match")
-		} else if returnUser.UserId == "" {
+		} else if returnUser.Id == "" {
 			t.Fatal("UserId wasn't created")
 		}
 	})

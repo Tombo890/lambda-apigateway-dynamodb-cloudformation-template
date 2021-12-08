@@ -2,7 +2,6 @@ package main
 
 import (
 	"GO_fun/models"
-	"encoding/json"
 	"log"
 	"os"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/google/uuid"
+	jsoniter "github.com/json-iterator/go"
 )
 
 type dependencies struct {
@@ -40,8 +40,8 @@ func (depend *dependencies) CreateUser(userToSave models.User) models.User {
 		}
 	}
 
-	if userToSave.UserId == "" {
-		userToSave.UserId = uuid.New().String()
+	if userToSave.Id == "" {
+		userToSave.Id = uuid.New().String()
 	}
 
 	marshaledInput, err := dynamodbattribute.MarshalMap(userToSave)
@@ -67,7 +67,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	passedUser := models.User{}
 
-	err := json.Unmarshal([]byte(request.Body), &passedUser)
+	err := jsoniter.Unmarshal([]byte(request.Body), &passedUser)
 	if err != nil || passedUser == (models.User{}) {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 422,
@@ -83,8 +83,8 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
-	passedUser.UserId = userRecord.UserId
-	formatedUser, err := json.Marshal(passedUser)
+	passedUser.Id = userRecord.Id
+	formatedUser, err := jsoniter.Marshal(passedUser)
 
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err

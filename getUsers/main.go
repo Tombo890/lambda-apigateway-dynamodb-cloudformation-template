@@ -21,7 +21,7 @@ type dependencies struct {
 	table string
 }
 
-func (depend *dependencies) GetUser(userId string, deviceId string) models.User {
+func (depend *dependencies) GetUser(userId string) models.User {
 
 	if depend.ddb == nil {
 		// Initialize a session that the SDK will use to load
@@ -46,9 +46,6 @@ func (depend *dependencies) GetUser(userId string, deviceId string) models.User 
 			"UserId": {
 				S: aws.String(userId),
 			},
-			"DeviceId": {
-				S: aws.String(deviceId),
-			},
 		},
 	})
 
@@ -69,16 +66,15 @@ func (depend *dependencies) GetUser(userId string, deviceId string) models.User 
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	userId := request.QueryStringParameters["userId"]
-	deviceId := request.QueryStringParameters["deviceId"]
 
-	if userId == "" || deviceId == "" {
+	if userId == "" {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 422,
 		}, nil
 	}
 
 	depend := dependencies{}
-	userRecord := depend.GetUser(userId, deviceId)
+	userRecord := depend.GetUser(userId)
 
 	if userRecord == (models.User{}) {
 		return events.APIGatewayProxyResponse{
