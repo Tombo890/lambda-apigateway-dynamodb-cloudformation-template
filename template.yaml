@@ -5,16 +5,16 @@ Description: >
   
   Sample SAM Template for GO_fun
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-Globals:
-  Function:
-    Timeout: 5
-
 Parameters:
   NRAccountId:
     Type: String
     Description: Your New Relic account ID; necessary for distributed tracing.
     AllowedPattern: '[0-9]+'
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
 
 Resources:
   UserFunctionsRole:
@@ -74,11 +74,11 @@ Resources:
           TABLE: "Users"
           New_RELIC_ACCOUNT_ID: !Ref ${NRAccountId}
           NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref ${NRAccountId}
-        LAYERS:
-          - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
-        Policies:
-          - AWSSecretsManagerGetSecretValuePolicy:
-            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      LAYERS:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+          SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
     Logs:
       Type: AWS::Logs::LogGroup
       Properties:

@@ -14,5 +14,8 @@
 # debug files
 */__debug_bin
 
+# SAM files
+/.aws-sam
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
