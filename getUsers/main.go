@@ -96,6 +96,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 }
 
 func main() {
-	log.Fatalf("Testing New Relic integration")
+
 	lambda.Start(Handler)
 }
