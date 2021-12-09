@@ -80,8 +80,7 @@ Resources:
           LIBHONEY_DATASET: CreateUsers
           LIBHONEY_API_KEY: !Ref HoneycombAPIKey
       Layers:
-        #- !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:702835727665:layer:honeycomb-lambda-extension-x86_64:7"
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
@@ -114,8 +113,7 @@ Resources:
           LIBHONEY_DATASET: CreateUsers
           LIBHONEY_API_KEY: !Ref HoneycombAPIKey
       Layers:
-        #- !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
-        - !Sub arn:aws:lambda:${AWS::Region}:702835727665:layer:honeycomb-lambda-extension-x86_64:7"
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
