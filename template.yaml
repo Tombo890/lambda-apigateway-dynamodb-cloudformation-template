@@ -85,11 +85,11 @@ Resources:
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
-    Logs:
-      Type: AWS::Logs::LogGroup
-      Properties:
-        LogGroupName: {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "GetUsers"}]]}
-        RetentionInDays: 7
+  GetUsersLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "GetUsers"}]]}
+      RetentionInDays: 30
 
   CreateUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -119,11 +119,11 @@ Resources:
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
-    Logs:
-      Type: AWS::Logs::LogGroup
-      Properties:
-        LogGroupName: {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "CreateUsers"}]]}
-        RetentionInDays: 7
+  CreateUsersLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "CreateUsers"}]]}
+      RetentionInDays: 30
 
   # GatewayApi:
   #   Type: AWS::Serverless::Api
