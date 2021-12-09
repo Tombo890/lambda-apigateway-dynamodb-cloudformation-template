@@ -87,7 +87,7 @@ Resources:
   GetUsersLogs:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "GetUsers"}]]}
+      LogGroupName: "/aws/lambda/GetUsers"
       RetentionInDays: 30
 
   CreateUsersFunction:
@@ -120,7 +120,7 @@ Resources:
   CreateUsersLogs:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "CreateUsers"}]]}
+      LogGroupName: "/aws/lambda/CreateUsers"
       RetentionInDays: 30
 
   # GatewayApi:
