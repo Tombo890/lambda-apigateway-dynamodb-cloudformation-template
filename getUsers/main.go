@@ -3,7 +3,6 @@ package main
 import (
 	"GO_fun/models"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -13,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"go.uber.org/zap"
 
 	jsoniter "github.com/json-iterator/go"
 )
@@ -22,7 +22,7 @@ type dependencies struct {
 	table string
 }
 
-func (depend *dependencies) GetUser(userId string) models.User {
+func (depend *dependencies) GetUser(userId string, log *zap.Logger) models.User {
 
 	if depend.ddb == nil {
 		// Initialize a session that the SDK will use to load
@@ -51,7 +51,8 @@ func (depend *dependencies) GetUser(userId string) models.User {
 	})
 
 	if err != nil {
-		log.Fatalf("Got error calling GetUser: %s", err)
+		log.Error("GetUser",
+			zap.String("error message", err.Error()))
 	}
 
 	userRecord := models.User{}
@@ -65,8 +66,12 @@ func (depend *dependencies) GetUser(userId string) models.User {
 }
 
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
 
 	userId := request.QueryStringParameters["userId"]
+	logger.Info("GetUser",
+		zap.String("userId", userId))
 
 	if userId == "" {
 		return events.APIGatewayProxyResponse{
@@ -75,7 +80,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	depend := dependencies{}
-	userRecord := depend.GetUser(userId)
+	userRecord := depend.GetUser(userId, logger)
 
 	if userRecord == (models.User{}) {
 		return events.APIGatewayProxyResponse{
