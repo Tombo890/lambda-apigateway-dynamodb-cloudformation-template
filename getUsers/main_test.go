@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
 type mockedGetItem struct {
@@ -20,6 +21,9 @@ func (mockedOutput mockedGetItem) GetItem(in *dynamodb.GetItemInput) (*dynamodb.
 }
 
 func TestHandler(t *testing.T) {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+
 	userId := uuid.New().String()
 	email := "test@paxi.com"
 	plan := "Standard"
@@ -50,7 +54,7 @@ func TestHandler(t *testing.T) {
 			table: "test_table",
 		}
 
-		returnUser := depend.GetUser(userId)
+		returnUser := depend.GetUser(userId, logger)
 
 		if returnUser == (models.User{}) {
 			t.Fatal("Something Wrong, panic!!!")
