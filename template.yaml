@@ -13,6 +13,9 @@ Parameters:
   HoneycombAPIKey:
     Type: String
     Description: Honeycomb IO API Key
+  CognitoUsersPoolARN:
+    Type: String
+    Description: Cognito User Pool ID
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -21,7 +24,7 @@ Globals:
     Auth: 
       Authorizers:
         CognitoAuthorizer:
-          UserPoolArn: !GetAtt Users.Arn
+          UserPoolArn: !Ref CognitoUsersPoolARN
   Function:
     # TODO: DeploymentPreference (this is for slow rollouts)
     Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
