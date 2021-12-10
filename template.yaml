@@ -90,11 +90,6 @@ Resources:
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
-      Tags:
-        - Key: lambda:createdBy
-          Value: SAM
-        - Key: lambda
-          Value: Users
 
   GetUsersLogs:
     Type: AWS::Logs::LogGroup
@@ -134,11 +129,6 @@ Resources:
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
-      Tags:
-        - Key: lambda:createdBy
-          Value: SAM
-        - Key: lambda
-          Value: Users
 
   CreateUsersLogs:
     Type: AWS::Logs::LogGroup
