@@ -1,8 +1,8 @@
 package models
 
 type User struct {
-	Id        string
+	BillingId string
 	Email     string
 	Plan      string
-	BillingId string
+	Phone     string
 }

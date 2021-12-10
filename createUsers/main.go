@@ -12,7 +12,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
-	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -40,10 +39,6 @@ func (depend *dependencies) CreateUser(userToSave models.User) models.User {
 		}
 	}
 
-	if userToSave.Id == "" {
-		userToSave.Id = uuid.New().String()
-	}
-
 	marshaledInput, err := dynamodbattribute.MarshalMap(userToSave)
 	if err != nil {
 		log.Fatalf("Failed to marshal new user: %s", err)
@@ -68,7 +63,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	passedUser := models.User{}
 
 	err := jsoniter.Unmarshal([]byte(request.Body), &passedUser)
-	if err != nil || passedUser == (models.User{}) {
+	if err != nil || passedUser == (models.User{}) || passedUser.Email == "" {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 422,
 		}, nil
@@ -83,7 +78,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
-	passedUser.Id = userRecord.Id
 	formatedUser, err := jsoniter.Marshal(passedUser)
 
 	if err != nil {

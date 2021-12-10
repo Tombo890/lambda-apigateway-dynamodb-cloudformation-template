@@ -20,6 +20,7 @@ Globals:
     Timeout: 5
 
 Resources:
+
   UserFunctionsRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -61,7 +62,10 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       FunctionName: GetUsers
+      AutoPublishAlias: Stage
       CodeUri: getUsers/
+      # TODO: DeploymentPreference (this is for slow rollouts)
+      # TODO: ProvisionedConcurrencyConfig (provision concurrency)
       Handler: getUsers
       Runtime: go1.x
       Role: !GetAtt UserFunctionsRole.Arn
@@ -72,6 +76,8 @@ Resources:
           Properties:
             Path: /users
             Method: GET
+            Auth:
+              Authorizer: UserAuth
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           TABLE: "Users"
@@ -84,17 +90,26 @@ Resources:
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      Tags:
+        - Key: lambda:createdBy
+          Value: SAM
+        - Key: lambda
+          Value: Users
+
   GetUsersLogs:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: "/aws/lambda/GetUsers"
+      LogGroupName: /aws/lambda/GetUsers
       RetentionInDays: 30
 
   CreateUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       FunctionName: CreateUsers
+      AutoPublishAlias: Stage
       CodeUri: createUsers/
+      # TODO: DeploymentPreference (this is for slow rollouts
+      # TODO: ProvisionedConcurrencyConfig (provision concurrency)
       Handler: createUsers
       Runtime: go1.x
       Role: !GetAtt UserFunctionsRole.Arn
@@ -105,6 +120,8 @@ Resources:
           Properties:
             Path: /users
             Method: POST
+            Auth:
+              Authorizer: UserAuth
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           TABLE: "Users"
@@ -117,10 +134,16 @@ Resources:
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      Tags:
+        - Key: lambda:createdBy
+          Value: SAM
+        - Key: lambda
+          Value: Users
+
   CreateUsersLogs:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: "/aws/lambda/CreateUsers"
+      LogGroupName: /aws/lambda/CreateUsers
       RetentionInDays: 30
 
   # GatewayApi:

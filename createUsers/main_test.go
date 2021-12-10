@@ -20,14 +20,16 @@ func (mockedOutput mockedPutItem) PutItem(in *dynamodb.PutItemInput) (*dynamodb.
 
 func TestHandler(t *testing.T) {
 
+	billingId := uuid.New().String()
 	email := "test@paxi.com"
 	plan := "Standard"
-	billingId := uuid.New().String()
+	phone := "1234567890"
 
-	userWithoutIdToCreate := models.User{
+	userToCreate := models.User{
 		Email:     email,
 		Plan:      plan,
 		BillingId: billingId,
+		Phone:     phone,
 	}
 
 	t.Run("Successful Request", func(t *testing.T) {
@@ -40,12 +42,10 @@ func TestHandler(t *testing.T) {
 			table: "test_table",
 		}
 
-		returnUser := depend.CreateUser(userWithoutIdToCreate)
+		returnUser := depend.CreateUser(userToCreate)
 
 		if returnUser == (models.User{}) {
 			t.Fatal("Something Wrong, panic!!!")
-		} else if returnUser.Id == "" {
-			t.Fatal("UserId wasn't created")
 		}
 	})
 }

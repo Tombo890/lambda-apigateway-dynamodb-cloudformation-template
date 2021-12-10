@@ -24,17 +24,18 @@ func TestHandler(t *testing.T) {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
-	userId := uuid.New().String()
+	billingId := uuid.New().String()
 	email := "test@paxi.com"
 	plan := "Standard"
-	billingId := uuid.New().String()
+	phone := "1234567890"
 
 	t.Run("Successful Request", func(t *testing.T) {
 		mock := mockedGetItem{
 			Response: dynamodb.GetItemOutput{
 				Item: map[string]*dynamodb.AttributeValue{
-					"Id": {
-						S: aws.String(userId),
+
+					"BillingId": {
+						S: aws.String(billingId),
 					},
 					"Email": {
 						S: aws.String(email),
@@ -42,8 +43,8 @@ func TestHandler(t *testing.T) {
 					"Plan": {
 						S: aws.String(plan),
 					},
-					"BillingId": {
-						S: aws.String(billingId),
+					"Phone": {
+						S: aws.String(phone),
 					},
 				},
 			},
@@ -54,11 +55,11 @@ func TestHandler(t *testing.T) {
 			table: "test_table",
 		}
 
-		returnUser := depend.GetUser(userId, logger)
+		returnUser := depend.GetUser(email, logger)
 
 		if returnUser == (models.User{}) {
 			t.Fatal("Something Wrong, panic!!!")
-		} else if returnUser.Id != userId {
+		} else if returnUser.Email != email {
 			t.Fatal("UserId didn't match")
 		}
 	})

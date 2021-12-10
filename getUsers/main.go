@@ -22,7 +22,7 @@ type dependencies struct {
 	table string
 }
 
-func (depend *dependencies) GetUser(userId string, log *zap.Logger) models.User {
+func (depend *dependencies) GetUser(email string, log *zap.Logger) models.User {
 
 	if depend.ddb == nil {
 		// Initialize a session that the SDK will use to load
@@ -44,8 +44,8 @@ func (depend *dependencies) GetUser(userId string, log *zap.Logger) models.User 
 	result, err := depend.ddb.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String(depend.table),
 		Key: map[string]*dynamodb.AttributeValue{
-			"Id": {
-				S: aws.String(userId),
+			"Email": {
+				S: aws.String(email),
 			},
 		},
 	})
@@ -69,18 +69,18 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
-	userId := request.QueryStringParameters["userId"]
+	email := request.QueryStringParameters["email"]
 	logger.Info("GetUser",
-		zap.String("userId", userId))
+		zap.String("email: ", email))
 
-	if userId == "" {
+	if email == "" {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 422,
 		}, nil
 	}
 
 	depend := dependencies{}
-	userRecord := depend.GetUser(userId, logger)
+	userRecord := depend.GetUser(email, logger)
 
 	if userRecord == (models.User{}) {
 		return events.APIGatewayProxyResponse{
