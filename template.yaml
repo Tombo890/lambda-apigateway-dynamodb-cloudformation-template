@@ -87,8 +87,6 @@ Resources:
           Properties:
             Path: /users
             Method: GET
-            Auth:
-              Authorizer: UserAuth
       FunctionName: GetUsers
       Handler: getUsers
       Policies:
@@ -114,8 +112,6 @@ Resources:
           Properties:
             Path: /users
             Method: POST
-            Auth:
-              Authorizer: UserAuth
       FunctionName: CreateUsers
       Handler: createUsers
       Policies:
