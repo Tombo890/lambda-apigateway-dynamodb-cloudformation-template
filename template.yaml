@@ -16,15 +16,32 @@ Parameters:
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
+  Api:
+    Name: UsersAPI
+    Auth: 
+      Authorizers:
+        CognitoAuthorizer:
+          UserPoolArn: !GetAtt Users.Arn
   Function:
+    # TODO: DeploymentPreference (this is for slow rollouts)
+    Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+      Variables:
+        TABLE: "Users"
+        New_RELIC_ACCOUNT_ID: !Ref NRAccountId
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRAccountId
+        LIBHONEY_DATASET: CreateUsers
+        LIBHONEY_API_KEY: !Ref HoneycombAPIKey
+    Layers:
+      - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
+    Runtime: go1.x
     Timeout: 5
+    Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
 
 Resources:
 
   UserFunctionsRole:
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: UserFunctionsRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -38,6 +55,7 @@ Resources:
         - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
         - 'arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess'
         - 'arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess'
+      RoleName: UserFunctionsRole
       Tags:
         - Value: SAM
           Key: 'lambda:createdBy'
@@ -46,8 +64,6 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: paxi-users
-      VersioningConfiguration:
-        Status: Enabled
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -57,19 +73,14 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
     
   GetUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      FunctionName: GetUsers
       AutoPublishAlias: Stage
       CodeUri: getUsers/
-      # TODO: DeploymentPreference (this is for slow rollouts)
-      # TODO: ProvisionedConcurrencyConfig (provision concurrency)
-      Handler: getUsers
-      Runtime: go1.x
-      Role: !GetAtt UserFunctionsRole.Arn
-      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         GetUser:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -78,18 +89,13 @@ Resources:
             Method: GET
             Auth:
               Authorizer: UserAuth
-      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-        Variables:
-          TABLE: "Users"
-          New_RELIC_ACCOUNT_ID: !Ref NRAccountId
-          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRAccountId
-          LIBHONEY_DATASET: CreateUsers
-          LIBHONEY_API_KEY: !Ref HoneycombAPIKey
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
+      FunctionName: GetUsers
+      Handler: getUsers
       Policies:
-        - AWSSecretsManagerGetSecretValuePolicy:
-          SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      - AWSSecretsManagerGetSecretValuePolicy:
+        SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      # TODO: ProvisionedConcurrencyConfig (provision concurrency)
+      Role: !GetAtt UserFunctionsRole.Arn
 
   GetUsersLogs:
     Type: AWS::Logs::LogGroup
@@ -100,15 +106,8 @@ Resources:
   CreateUsersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      FunctionName: CreateUsers
       AutoPublishAlias: Stage
       CodeUri: createUsers/
-      # TODO: DeploymentPreference (this is for slow rollouts
-      # TODO: ProvisionedConcurrencyConfig (provision concurrency)
-      Handler: createUsers
-      Runtime: go1.x
-      Role: !GetAtt UserFunctionsRole.Arn
-      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         PostUser:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -117,19 +116,14 @@ Resources:
             Method: POST
             Auth:
               Authorizer: UserAuth
-      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-        Variables:
-          TABLE: "Users"
-          New_RELIC_ACCOUNT_ID: !Ref NRAccountId
-          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRAccountId
-          LIBHONEY_DATASET: CreateUsers
-          LIBHONEY_API_KEY: !Ref HoneycombAPIKey
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:12
+      FunctionName: CreateUsers
+      Handler: createUsers
       Policies:
-        - AWSSecretsManagerGetSecretValuePolicy:
-          SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
-
+      - AWSSecretsManagerGetSecretValuePolicy:
+        SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      # TODO: ProvisionedConcurrencyConfig (provision concurrency)
+      Role: !GetAtt UserFunctionsRole.Arn
+      
   CreateUsersLogs:
     Type: AWS::Logs::LogGroup
     Properties:
