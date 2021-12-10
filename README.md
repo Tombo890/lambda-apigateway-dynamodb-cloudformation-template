@@ -1,17 +1,3 @@
-# GO_fun
-
-This is a sample template for GO_fun - Below is a brief explanation of what we have generated for you:
-
-```bash
-.
-├── Makefile                    <-- Make to automate build
-├── README.md                   <-- This instructions file
-├── hello-world                 <-- Source code for a lambda function
-│   ├── main.go                 <-- Lambda function code
-│   └── main_test.go            <-- Unit tests
-└── template.yaml
-```
-
 ## Requirements
 
 * AWS CLI already configured with Administrator permission
@@ -63,7 +49,7 @@ AWS Lambda Golang runtime requires a flat folder with the executable generated o
     FirstFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: hello_world/
+            CodeUri: users/
             ...
 ```
 
@@ -83,13 +69,6 @@ The command will package and deploy your application to AWS, with a series of pr
 
 You can find your API Gateway Endpoint URL in the output values displayed after deployment.
 
-### Testing
-
-We use `testing` package that is built-in in Golang and you can simply run the following command to run our tests:
-
-```shell
-go test -v ./hello-world/
-```
 # Appendix
 
 ### Golang installation
